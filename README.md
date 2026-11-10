@@ -74,7 +74,8 @@ Inspired by retro classics like *Wolfenstein 3D*, this project implements ray-bo
 
 4. **Wall Height Projection (`draw_sections()`)**:
    - Computes column slice height using inverse distance projection:
-     $$\text{wall\_height} = \frac{\text{win\_height} \times 40}{\text{distance}}$$
+     $$\text{wall height} = \frac{\text{window height} \times 40}{\text{distance}}$$
+     *(implemented as `int wall_height = (win_height * 40) / distance;`)*
    - Fills the corresponding rectangle vertical section in the framebuffer with the hit cell's color.
 
 5. **Blit**:
