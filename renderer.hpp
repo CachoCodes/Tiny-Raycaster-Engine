@@ -25,19 +25,25 @@ namespace raycaster{
     const int FOV = 90;    
     int section_width = static_cast<int>(win_width / definition);
     int sections[definition];
+    int sections_color[definition];
     float separation_degrees = static_cast<float>(FOV) / definition;
 
+    //1 = Blanco
+    //2 = Verde
+    //3 = Rojo
+    //4 = Azul
+    //5 = Amarillo
     int grid[16][16] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
-        {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1},
+        {1,0,0,0,3,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,4,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,5,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -103,11 +109,11 @@ void calculate_rays(){
             distance++;
             current_x += x_step * 5;
             current_y += y_step * 5;
-
+            int color = 0;
             for(int x = 0; x <= 15 && !intersected; x++){
                 for(int y = 0; y <= 15; y++){
                     if(raycaster::grid[x][y] == 0) continue;
-                    
+                    color = raycaster::grid[x][y];
                     int h_x = raycaster::precalc_of_areas[x][y][0][0];
                     int h_y = raycaster::precalc_of_areas[x][y][0][1];
                     int l_x = raycaster::precalc_of_areas[x][y][1][0];
@@ -117,7 +123,8 @@ void calculate_rays(){
                     bool x_coincidence = h_x >= current_x && l_x <= current_x;
                     bool y_coincidence = h_y >= current_y && l_y <= current_y;
                     bool is_inside = x_coincidence && y_coincidence;
-
+                    raycaster::sections_color[i] = color;
+                    
                     if(is_inside) {
                         intersected = true; 
                         break;              
@@ -128,6 +135,7 @@ void calculate_rays(){
                 distance = 9999;
                 intersected = true;
                 raycaster::sections[i] = distance;
+                raycaster::sections_color[i] = color;
                 break; 
             }
         raycaster::sections[i] = distance;
@@ -146,8 +154,25 @@ void draw_sections(){
 
         int x1 = i * raycaster::section_width;
         int x2 = x1 + raycaster::section_width;
-
-        raycaster::draw_rect(framebuffer, x1, start_y, x2, end_y, 0x00FFFFFF);
+        //1 = Blanco
+        //2 = Verde
+        //3 = Rojo
+        //4 = Azul
+        //5 = Amarillo
+        if (raycaster::sections_color[i] == 1)
+            raycaster::draw_rect(framebuffer, x1, start_y, x2, end_y, 0x00FFFFFF);
+        
+        if (raycaster::sections_color[i] == 2)
+            raycaster::draw_rect(framebuffer, x1, start_y, x2, end_y, 0x0000FF00);
+            
+        if (raycaster::sections_color[i] == 3)
+            raycaster::draw_rect(framebuffer, x1, start_y, x2, end_y, 0x00FF0000);
+            
+        if (raycaster::sections_color[i] == 4)
+            raycaster::draw_rect(framebuffer, x1, start_y, x2, end_y, 0x000000FF);
+            
+        if (raycaster::sections_color[i] == 5)
+            raycaster::draw_rect(framebuffer, x1, start_y, x2, end_y, 0x00FFFF00);
     }
 }
 
