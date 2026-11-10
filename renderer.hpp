@@ -211,6 +211,7 @@ void input_loop(){
 
 void render_loop(uint32_t *framebuffer){
     raycaster::clear_framebuffer(framebuffer, 0x00000000);
+    raycaster::draw_rect(framebuffer,0,win_height/2,win_width,0, 0x00999999);
     calculate_rays();
     draw_sections();
 }
