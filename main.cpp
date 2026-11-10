@@ -30,8 +30,27 @@ LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
             return 0;
 
         case WM_KEYDOWN:
-            if (wParam == 'D')
+            if (wParam == 'E')
                 debug_mode = !debug_mode;
+            if(wParam == 'D')
+                raycaster::d_pressed = true;
+            if(wParam == 'A')
+                raycaster::a_pressed = true;
+            if(wParam == 'S')
+                raycaster::s_pressed = true;
+            if(wParam == 'W')
+                raycaster::w_pressed = true;
+            return 0;
+        case WM_KEYUP:
+            if(wParam == 'D')
+                raycaster::d_pressed = false;
+            if(wParam == 'A')
+                raycaster::a_pressed = false;
+            if(wParam == 'S')
+                raycaster::s_pressed = false;
+            if(wParam == 'W')
+                raycaster::w_pressed = false;
+
             return 0;
         default:
             return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -121,7 +140,7 @@ int WINAPI WinMain(HINSTANCE h_instance, HINSTANCE, LPSTR, int) {
         delta = std::chrono::duration<float>(frame_start - last_frame_time).count();
 
         last_frame_time = frame_start;
-
+        input_loop();
         render_loop(framebuffer);
 
         frames++;

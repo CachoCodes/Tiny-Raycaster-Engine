@@ -10,8 +10,15 @@ uint32_t *framebuffer = nullptr;
 int player_x = 800;
 int player_y = 800;
 
+int speed = 200;
+
 namespace raycaster{
-    const int definition = 128;
+    bool w_pressed = false;
+    bool s_pressed = false;
+    bool d_pressed = false;
+    bool a_pressed = false;
+    
+    const int definition = 256;
     const int FOV = 90;    
     int section_width = static_cast<int>(win_width / definition);
     int sections[definition];
@@ -141,6 +148,17 @@ void draw_sections(){
 void init_render(){
     framebuffer = new uint32_t[win_width * win_height];
     precalculate_areas();
+}
+
+void input_loop(){
+    if(raycaster::w_pressed)
+        player_y += speed*delta;
+    if(raycaster::s_pressed)
+        player_y -= speed*delta;
+    if(raycaster::d_pressed)
+        player_x -= speed*delta;
+    if(raycaster::a_pressed)
+        player_x += speed*delta;
 }
 
 void render_loop(uint32_t *framebuffer){
