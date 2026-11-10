@@ -21,7 +21,7 @@ namespace raycaster{
     bool right_pressed = false;
     bool shift_pressed = false;
     
-    const int definition = 256;
+    const int definition = 128;
     const int FOV = 90;    
     int section_width = static_cast<int>(win_width / definition);
     int sections[definition];
@@ -91,7 +91,7 @@ void precalculate_areas(){
 
 void calculate_rays(){
     for(int i = 0; i < raycaster::definition; i++){
-        float current_degree = (i * raycaster::separation_degrees) * (3.14159265f / 180.0f) + looking_at * (3.14159265f / 180.0f) ;
+        float current_degree = (i * raycaster::separation_degrees) * (3.14159265f / 180.0f) + looking_at * (3.14159265f / 180.0f);
         float x_step = std::cosf(current_degree);
         float y_step = std::sinf(current_degree);
         float current_x = player_x;
@@ -124,19 +124,22 @@ void calculate_rays(){
                     }
                 }
             }
-            if (distance > 1000) { 
+            if (distance > 400) { 
+                distance = 9999;
+                intersected = true;
+                raycaster::sections[i] = distance;
                 break; 
             }
-        }
         raycaster::sections[i] = distance;
+    }
     }
 }
 
 void draw_sections(){
     for (int i = 0; i < raycaster::definition; i++) {
         int distance = raycaster::sections[i];
+        if (distance == 9999) continue;
         if (distance <= 0) distance = 1;
-        
         int wall_height = (win_height * 40) / distance;
         int start_y = (win_height - wall_height) / 2;
         int end_y = start_y + wall_height;
@@ -154,19 +157,31 @@ void init_render(){
 }
 
 void input_loop(){
-    (raycaster::shift_pressed) ? speed == 400: speed == 200;
-    if(raycaster::w_pressed)
-        player_y += speed*delta;
-    if(raycaster::s_pressed)
-        player_y -= speed*delta;
-    if(raycaster::d_pressed)
-        player_x -= speed*delta;
-    if(raycaster::a_pressed)
-        player_x += speed*delta;
+    float direction_x = std::cosf((looking_at + raycaster::FOV/2) * (3.14159265f / 180.0f));
+    float direction_y = std::sinf((looking_at + raycaster::FOV/2) * (3.14159265f / 180.0f));
+
+    speed = (raycaster::shift_pressed) ? 400 : 200;
+
+    if(raycaster::w_pressed){
+        player_x += static_cast<int>(direction_x * speed * delta);
+        player_y += static_cast<int>(direction_y * speed * delta);
+    }
+    if(raycaster::s_pressed){
+        player_x -= static_cast<int>(direction_x * speed * delta);
+        player_y -= static_cast<int>(direction_y * speed * delta);
+    }
+    if(raycaster::a_pressed){
+        player_x += static_cast<int>(direction_y * speed * delta);
+        player_y -= static_cast<int>(direction_x * speed * delta);
+    }
+    if(raycaster::d_pressed){
+        player_x -= static_cast<int>(direction_y * speed * delta);
+        player_y += static_cast<int>(direction_x * speed * delta);
+    }
     if(raycaster::left_pressed)
-        looking_at += 180*delta;
+        looking_at -= 180 * delta;
     if(raycaster::right_pressed)
-        looking_at -= 180*delta;
+        looking_at += 180 * delta;
 }
 
 void render_loop(uint32_t *framebuffer){
