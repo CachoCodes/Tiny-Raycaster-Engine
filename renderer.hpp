@@ -9,14 +9,17 @@ uint32_t *framebuffer = nullptr;
 
 int player_x = 800;
 int player_y = 800;
-
 int speed = 200;
+int looking_at = 0;
 
 namespace raycaster{
     bool w_pressed = false;
     bool s_pressed = false;
     bool d_pressed = false;
     bool a_pressed = false;
+    bool left_pressed = false;
+    bool right_pressed = false;
+    bool shift_pressed = false;
     
     const int definition = 256;
     const int FOV = 90;    
@@ -88,7 +91,7 @@ void precalculate_areas(){
 
 void calculate_rays(){
     for(int i = 0; i < raycaster::definition; i++){
-        float current_degree = (i * raycaster::separation_degrees) * (3.14159265f / 180.0f);
+        float current_degree = (i * raycaster::separation_degrees) * (3.14159265f / 180.0f) + looking_at * (3.14159265f / 180.0f) ;
         float x_step = std::cosf(current_degree);
         float y_step = std::sinf(current_degree);
         float current_x = player_x;
@@ -151,6 +154,7 @@ void init_render(){
 }
 
 void input_loop(){
+    (raycaster::shift_pressed) ? speed == 400: speed == 200;
     if(raycaster::w_pressed)
         player_y += speed*delta;
     if(raycaster::s_pressed)
@@ -159,6 +163,10 @@ void input_loop(){
         player_x -= speed*delta;
     if(raycaster::a_pressed)
         player_x += speed*delta;
+    if(raycaster::left_pressed)
+        looking_at += 180*delta;
+    if(raycaster::right_pressed)
+        looking_at -= 180*delta;
 }
 
 void render_loop(uint32_t *framebuffer){

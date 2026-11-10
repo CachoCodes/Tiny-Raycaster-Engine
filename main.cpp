@@ -40,6 +40,12 @@ LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                 raycaster::s_pressed = true;
             if(wParam == 'W')
                 raycaster::w_pressed = true;
+            if(wParam == VK_LEFT)
+                raycaster::left_pressed = true;
+            if(wParam == VK_RIGHT)
+                raycaster::right_pressed = true;
+            if(wParam == VK_SHIFT)
+                raycaster::shift_pressed = true;
             return 0;
         case WM_KEYUP:
             if(wParam == 'D')
@@ -50,7 +56,12 @@ LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                 raycaster::s_pressed = false;
             if(wParam == 'W')
                 raycaster::w_pressed = false;
-
+            if(wParam == VK_LEFT)
+                raycaster::left_pressed = false;
+            if(wParam == VK_RIGHT)
+                raycaster::right_pressed = false;
+            if(wParam == VK_SHIFT)
+                raycaster::shift_pressed = false;
             return 0;
         default:
             return DefWindowProc(hwnd, msg, wParam, lParam);
